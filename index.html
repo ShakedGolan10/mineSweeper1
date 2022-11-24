@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mines Sweaper</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body oncontextmenu="return false" onload="initGame()">
+    <h1>Mine Sweeper</h1>
+    <div class="smiley"></div>
+    <div class="time">Time : <span class="minutes">00 : </span><span class="seconds">00</span></div>
+    <div class="score">The score is : <span class="scorePoints"></span></div>
+    <div class="lives"></div>
+    <div class="flagCount">Flags left : </div>
+    <button class="changelevel" onclick="changeDifficulty(this)">Easy (16)</button>
+    <button class="changelevel" onclick="changeDifficulty(this)">Hard (64)</button>
+    <button class="changelevel" onclick="changeDifficulty(this)">Extreme (144)</button>
+    <div>
+    <table class="boardGame" border="1" cellpadding="10">
+        <tbody class="board">
+            
+          
+        </tbody>
+    </table>
+</div>
+
+<div class="reset">
+   
+</div>
+
+<div class="victory">You are victorious !</div>
+
+<footer class="MyName"><h2>Shaked Golan</h2></footer>
+
+    <script src="/js/utility.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
