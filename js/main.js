@@ -96,6 +96,20 @@ function CellClicked(elCell, i, j) {
     gGame.shownCount = 0
     if (!gGame.isOn) return
 
+    if (isFirstClick) {
+        createMines(gLevel.MINES, i, j)
+        gTimeNow = Date.now()
+        gTime = setInterval(time, 1000);
+        isFirstClick = false
+    }
+
+    if (gBoard[i][j].isShown) {
+        return
+    }
+    if (elCell.innerText === flag) {
+        return
+    }
+
     if (isHintOn) {
         elCell.innerText = setMinesNegsCount(i, j, gBoard)
         elCell.style.backgroundColor = 'grey'
@@ -109,25 +123,18 @@ function CellClicked(elCell, i, j) {
         setTimeout(() => {
             elCell.innerText = ``
             elCell.style.backgroundColor = 'rgba(204, 203, 203, 0.996)'
-            isHintOn = false
+            hideNieghbors(i, j, gBoard)
             console.log(`worked`);
         }, 1000)
 
-        hideNieghbors(i, j, gBoard)
+
+        isHintOn = false
+        return
+
     }
 
-    if (isFirstClick) {
-        createMines(gLevel.MINES, i, j)
-        gTimeNow = Date.now()
-        gTime = setInterval(time, 1000);
-        isFirstClick = false
-    }
-    if (gBoard[i][j].isShown) {
-        return
-    }
-    if (elCell.innerText === flag) {
-        return
-    }
+
+
     // check if mine
     if (gBoard[i][j].isMine) {
         gBoard[i][j].isShown = true
@@ -227,23 +234,6 @@ function redFlag(elFlag, i, j) {
     }
     elFlagsCount.innerText = `Flags count (${gLevel.MINES}): ` + gGame.markedCount
 }
-
-function createHints() {
-    for (let i = 0; i < gNumOfHints; i++) {
-
-        elHintsBar.innerHTML += `<button class="hints" onclick="useHint(this)">Press for a hint - ${hint}</button>`
-
-    }
-
-}
-
-function useHint(elHint) {
-    isHintOn = true
-    gNumOfHints--
-    elHint.style.display = `none`
-
-}
-
 
 function victory() {
 

@@ -76,6 +76,23 @@ function renderBoard(board) {
 // }
 // ${(board[i][j].isShown) ? cell : ''}
 
+function createHints() {
+    for (let i = 0; i < gNumOfHints; i++) {
+
+        elHintsBar.innerHTML += `<button class="hints" onclick="useHint(this)">Press for a hint - ${hint}</button>`
+
+    }
+
+}
+
+function useHint(elHint) {
+    isHintOn = true
+    gNumOfHints--
+    elHint.style.display = `none`
+
+}
+
+
 function showNieghbors(cellI, cellJ, mat) {
 
     for (var i = cellI - 1; i <= cellI + 1; i++) {
@@ -85,20 +102,26 @@ function showNieghbors(cellI, cellJ, mat) {
             if (i === cellI && j === cellJ) continue
             if (j < 0 || j >= mat[i].length) continue
 
-            if (isHintOn) {
+            if (isHintOn && mat[i][j].isShown === false) {
                 mat[i][j].isHint = true
-                console.log(gBoard);
-            }
-
-            mat[i][j].isShown = true
-            const elCell = document.querySelector(`.cell-${i}-${j}`)
-            elCell.innerText = setMinesNegsCount(i, j, gBoard)
-            elCell.style.backgroundColor = 'grey'
-            if (setMinesNegsCount(i, j, gBoard) === 0) {
-                elCell.innerText = ''
+                const elCell = document.querySelector(`.cell-${i}-${j}`)
+                elCell.innerText = setMinesNegsCount(i, j, gBoard)
                 elCell.style.backgroundColor = 'grey'
+                if (setMinesNegsCount(i, j, gBoard) === 0) {
+                    elCell.innerText = ''
+                    elCell.style.backgroundColor = 'grey'
+                }
+            } else {
+
+                mat[i][j].isShown = true
+                const elCell = document.querySelector(`.cell-${i}-${j}`)
+                elCell.innerText = setMinesNegsCount(i, j, gBoard)
+                elCell.style.backgroundColor = 'grey'
+                if (setMinesNegsCount(i, j, gBoard) === 0) {
+                    elCell.innerText = ''
+                    elCell.style.backgroundColor = 'grey'
+                }
             }
-            // renderCell({ i: i, j: j }, mine)
         }
 
     }
@@ -115,25 +138,21 @@ function hideNieghbors(cellI, cellJ, mat) {
             if (j < 0 || j >= mat[i].length) continue
 
             if (mat[i][j].isHint) {
-
                 mat[i][j].isHint = false
-                mat[i][j].isShown = false
+
                 const elCell = document.querySelector(`.cell-${i}-${j}`)
                 elCell.innerText = ``
                 elCell.style.backgroundColor = 'rgba(204, 203, 203, 0.996)'
-                if (setMinesNegsCount(i, j, gBoard) === 0) {
-                    elCell.innerText = ''
-                    elCell.style.backgroundColor = 'rgba(204, 203, 203, 0.996)'
-                }
-
             }
 
-            // renderCell({ i: i, j: j }, mine)
         }
 
+        // renderCell({ i: i, j: j }, mine)
     }
 
 }
+
+
 
 function time() {
 
