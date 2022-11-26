@@ -1,7 +1,6 @@
 'use strict'
 
 function renderCell(location, value) {
-    // Select the elCell and set the value
     const elCell = document.querySelector(`.cell-${location.i}-${location.j}`)
     elCell.innerHTML = value
 }
@@ -17,7 +16,8 @@ function buildBoard(gSize) {
                 minesAroundCount: 0,
                 isShown: false,
                 isMine: false,
-                isMarked: false
+                isMarked: false,
+                isHint: false
 
             }
 
@@ -44,7 +44,7 @@ function setMinesNegsCount(cellI, cellJ, mat) {
 
     return minesAroundCount
 }
-//
+
 
 
 function renderBoard(board) {
@@ -52,20 +52,12 @@ function renderBoard(board) {
     for (var i = 0; i < board.length; i++) {
         strHTML += '<tr>'
         for (var j = 0; j < board[0].length; j++) {
-            var cell = board[i][j]
-            if (cell.isMine === true) {
-                cell = mine
-            } else {
-                cell = cell.minesAroundCount
-            }
-
-
 
             const className = `cell cell-${i}-${j}`
-            // data-i="${i}" data-j="${j}"
+
             strHTML += `<td onclick="CellClicked(this, ${i}, ${j})" 
             oncontextmenu="redFlag(this, ${i}, ${j})"
-             class="${className} ">${(board[i][j].isShown) ? cell : ''}</td>`
+             class="${className} "></td>`
         }
         strHTML += '</tr>'
 
@@ -75,7 +67,14 @@ function renderBoard(board) {
 
 
 }
-
+// stuff I've left out duting tuning the code
+// var cell = board[i][j]
+// if (cell.isMine === true) {
+//     cell = mine
+// } else {
+//     cell = cell.minesAroundCount
+// }
+// ${(board[i][j].isShown) ? cell : ''}
 
 function showNieghbors(cellI, cellJ, mat) {
 
@@ -86,6 +85,11 @@ function showNieghbors(cellI, cellJ, mat) {
             if (i === cellI && j === cellJ) continue
             if (j < 0 || j >= mat[i].length) continue
 
+            if (isHintOn) {
+                mat[i][j].isHint = true
+                console.log(gBoard);
+            }
+
             mat[i][j].isShown = true
             const elCell = document.querySelector(`.cell-${i}-${j}`)
             elCell.innerText = setMinesNegsCount(i, j, gBoard)
@@ -94,6 +98,36 @@ function showNieghbors(cellI, cellJ, mat) {
                 elCell.innerText = ''
                 elCell.style.backgroundColor = 'grey'
             }
+            // renderCell({ i: i, j: j }, mine)
+        }
+
+    }
+
+}
+
+function hideNieghbors(cellI, cellJ, mat) {
+
+    for (var i = cellI - 1; i <= cellI + 1; i++) {
+        if (i < 0 || i >= mat.length) continue
+
+        for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+            if (i === cellI && j === cellJ) continue
+            if (j < 0 || j >= mat[i].length) continue
+
+            if (mat[i][j].isHint) {
+
+                mat[i][j].isHint = false
+                mat[i][j].isShown = false
+                const elCell = document.querySelector(`.cell-${i}-${j}`)
+                elCell.innerText = ``
+                elCell.style.backgroundColor = 'rgba(204, 203, 203, 0.996)'
+                if (setMinesNegsCount(i, j, gBoard) === 0) {
+                    elCell.innerText = ''
+                    elCell.style.backgroundColor = 'rgba(204, 203, 203, 0.996)'
+                }
+
+            }
+
             // renderCell({ i: i, j: j }, mine)
         }
 
@@ -116,9 +150,13 @@ function time() {
             gMinuteAmount++
             minute.innerText = `0${gMinuteAmount}:`
             gTimeNow = Date.now()
-            return (seconed.innerText = Math.floor((Date.now() - gTimeNow) / 1000))
+            return (seconed.innerText = '0' + Math.floor((Date.now() - gTimeNow) / 1000))
         } else {
-            return (seconed.innerText = Math.floor((Date.now() - gTimeNow) / 1000))
+            if (seconed.innerText = Math.floor((Date.now() - gTimeNow) / 1000) < 10) {
+                return (seconed.innerText = '0' + Math.floor((Date.now() - gTimeNow) / 1000))
+            } else {
+                return (seconed.innerText = Math.floor((Date.now() - gTimeNow) / 1000))
+            }
         }
     }
 }

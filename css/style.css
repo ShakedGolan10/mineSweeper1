@@ -34,6 +34,11 @@ body {
     margin-top: 10px;
 }
 
+.hints {
+    margin-top: 10px;
+}
+
+
 .cell {
 
     cursor: pointer;
@@ -67,6 +72,7 @@ body {
 }
 
 .changelevel {
+    cursor: pointer;
     box-shadow: 0px 2px 16px 10px rgba(19, 25, 191, 0.48);
 }
 

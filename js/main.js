@@ -12,7 +12,7 @@ var gGame = {
     markedCount: 0
 }
 
-
+var isHintOn = false
 var gLivesLeft = 3
 // stopWatch vars
 var isFirstClick = true
@@ -20,6 +20,7 @@ var gTime
 var gTimeNow
 var gTextmode
 var gMinuteAmount = 0
+var gNumOfHints = 3
 
 // global query selectors
 const elScore = document.querySelector(`.scorePoints`)
@@ -28,10 +29,12 @@ const elLives = document.querySelector(`.lives`)
 const elSmilyIcon = document.querySelector('.smiley')
 const elFlagsCount = document.querySelector(`.flagCount`)
 const elVictory = document.querySelector(`.victory`)
+const elHintsBar = document.querySelector(`.hintsBar`)
 
 // Shapes 
 const mine = '💣'
 const flag = '🚩'
+const hint = '💡'
 
 
 function initGame() {
@@ -45,7 +48,10 @@ function initGame() {
     gMinuteAmount = 0
     gGame.shownCount = 0
     gGame.markedCount = 0
+    gNumOfHints = 3
     // document query
+    elHintsBar.innerHTML = ''
+    elReset.innerHTML = ''
     elSmilyIcon.innerText = '😁😁😁'
     elReset.style.display = `none`
     elVictory.style.display = 'none'
@@ -61,7 +67,7 @@ function initGame() {
 
     // gBoard and render 
     gBoard = buildBoard(gLevel.SIZE)
-
+    createHints()
     renderBoard(gBoard)
 
 }
@@ -90,8 +96,28 @@ function CellClicked(elCell, i, j) {
     gGame.shownCount = 0
     if (!gGame.isOn) return
 
+    if (isHintOn) {
+        elCell.innerText = setMinesNegsCount(i, j, gBoard)
+        elCell.style.backgroundColor = 'grey'
+
+        if (setMinesNegsCount(i, j, gBoard) === 0) {
+            elCell.innerText = ''
+            elCell.style.backgroundColor = 'grey'
+            showNieghbors(i, j, gBoard)
+        }
+
+        setTimeout(() => {
+            elCell.innerText = ``
+            elCell.style.backgroundColor = 'rgba(204, 203, 203, 0.996)'
+            isHintOn = false
+            console.log(`worked`);
+        }, 1000)
+
+        hideNieghbors(i, j, gBoard)
+    }
+
     if (isFirstClick) {
-        createMines(gLevel.MINES)
+        createMines(gLevel.MINES, i, j)
         gTimeNow = Date.now()
         gTime = setInterval(time, 1000);
         isFirstClick = false
@@ -153,12 +179,16 @@ function CellClicked(elCell, i, j) {
     }
 }
 
-function createMines(NumOfMines) {
+function createMines(NumOfMines, idxOfFirstClick, jdxOfFirstClick) {
 
     for (var i = 0; i < NumOfMines; i++) {
         var d = getRandomInt(0, gLevel.SIZE)
         var j = getRandomInt(0, gLevel.SIZE)
+
         if (gBoard[d][j].isMine === true) {
+            i--
+        }
+        if (d === idxOfFirstClick && j === jdxOfFirstClick) {
             i--
         } else {
             gBoard[d][j].isMine = true
@@ -197,6 +227,23 @@ function redFlag(elFlag, i, j) {
     }
     elFlagsCount.innerText = `Flags count (${gLevel.MINES}): ` + gGame.markedCount
 }
+
+function createHints() {
+    for (let i = 0; i < gNumOfHints; i++) {
+
+        elHintsBar.innerHTML += `<button class="hints" onclick="useHint(this)">Press for a hint - ${hint}</button>`
+
+    }
+
+}
+
+function useHint(elHint) {
+    isHintOn = true
+    gNumOfHints--
+    elHint.style.display = `none`
+
+}
+
 
 function victory() {
 
